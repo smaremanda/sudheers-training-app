@@ -43,7 +43,7 @@ SHEET_ID    = os.environ.get("SHEET_ID", "1eUiLCexi_GIw_KVeliambvQLSLM07IABR6sH9
 PLAN_TAB    = "Plan"
 CONFIG_TAB  = "Config"
 SCOPES      = ["https://www.googleapis.com/auth/spreadsheets"]
-LOCAL_CREDS = HERE.parent / "sudheers-training-6e0b92f73bc7.json"
+LOCAL_CREDS = HERE.parent / "sudheers-training-6b0b31ea0f48.json"
 
 # Sheet column indices (0-based)
 C_DATE, C_DAY, C_PHASE, C_TYPE, C_DESC, C_PLANNED, C_CROSS, \
@@ -281,10 +281,11 @@ def manifest():
         "display": "standalone",
         "background_color": "#0d1117",
         "theme_color": "#e8843c",
-        "icons": [{
-            "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⛰️</text></svg>",
-            "sizes": "any", "type": "image/svg+xml",
-        }],
+        "icons": [
+            {"src": "/icon.svg", "sizes": "any", "type": "image/svg+xml"},
+            {"src": "/icon-192.png", "sizes": "192x192", "type": "image/png"},
+            {"src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable"},
+        ],
     })
 
 
