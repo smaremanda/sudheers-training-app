@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Fat Dog">
+<title>Fat Dog 120</title>
+<link rel="manifest" href="/manifest.json">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0d1117; --bg2:#0a0e13; --surface:#161b22; --surface2:#1f2731;
+  --border:#28323e; --border-amber:rgba(232,132,60,.45);
+  --amber:#e8843c; --amber-bright:#f5a623; --amber-dim:rgba(232,132,60,.14);
+  --text:#e6edf3; --dim:#aeb9c4; --muted:#7d8a97;
+  --green:#3fb950; --purple:#a371f7; --blue:#58a6ff; --red:#f85149; --indigo:#7c83ff;
+  --radius:14px;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+body{
+  background:var(--bg); color:var(--text);
+  font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+  min-height:100vh; padding-bottom:48px;
+}
+/* Topographic contour texture */
+body::before{
+  content:''; position:fixed; inset:0; z-index:0; pointer-events:none; opacity:.5;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400' viewBox='0 0 400 400'%3E%3Cg fill='none' stroke='%23e8843c' stroke-width='1' opacity='0.05'%3E%3Cpath d='M-20 120 Q100 60 200 110 T420 100'/%3E%3Cpath d='M-20 150 Q100 95 200 145 T420 138'/%3E%3Cpath d='M-20 182 Q100 132 200 180 T420 178'/%3E%3Cpath d='M-20 218 Q110 175 200 215 T420 215'/%3E%3Cpath d='M-20 255 Q120 215 200 250 T420 252'/%3E%3Cpath d='M-20 295 Q120 258 200 290 T420 292'/%3E%3Cpath d='M-20 335 Q120 300 200 332 T420 332'/%3E%3C/g%3E%3C/svg%3E");
+  background-size:560px 560px;
+}
+.wrap{position:relative; z-index:1; max-width:500px; margin:0 auto;}
+
+/* ── Header ── */
+.header{
+  background:linear-gradient(180deg, rgba(22,27,34,.96), rgba(13,17,23,.9));
+  backdrop-filter:blur(10px);
+  padding:14px 18px; padding-top:max(14px,env(safe-area-inset-top));
+  position:sticky; top:0; z-index:50; border-bottom:1px solid var(--border);
+  display:flex; align-items:center; justify-content:space-between;
+}
+.brand{display:flex; align-items:baseline; gap:9px;}
+.brand h1{
+  font-family:'Barlow Condensed',sans-serif; font-size:24px; font-weight:700;
+  letter-spacing:.5px; text-transform:uppercase; line-height:1;
+}
+.brand h1 b{color:var(--amber);}
+.countdown{
+  font-family:'JetBrains Mono',monospace; font-size:11px; font-weight:700;
+  color:var(--amber-bright); background:var(--amber-dim);
+  padding:3px 8px; border-radius:6px; letter-spacing:.5px; white-space:nowrap;
+}
+.sync-btn{
+  background:transparent; border:1px solid var(--border-amber); color:var(--amber);
+  padding:8px 12px; border-radius:9px; font-size:12px; font-weight:700;
+  cursor:pointer; display:flex; align-items:center; gap:6px; transition:.15s;
+  font-family:'Barlow Condensed',sans-serif; text-transform:uppercase; letter-spacing:.6px;
+}
+.sync-btn:active,.sync-btn.loading{background:var(--amber-dim);}
+
+.content{padding:18px 16px;}
+.section-label{
+  font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:600;
+  letter-spacing:1.5px; text-transform:uppercase; color:var(--muted);
+  margin:24px 2px 11px; display:flex; align-items:center; gap:8px;
+}
+.section-label:first-child{margin-top:4px;}
+.section-label::after{content:''; flex:1; height:1px; background:var(--border);}
+
+/* ── Today hero ── */
+.hero{
+  background:var(--surface); border-radius:var(--radius);
+  border:1px solid var(--border-amber); position:relative; overflow:hidden; cursor:pointer;
+}
+.hero::before{
+  content:''; position:absolute; top:0; left:0; right:0; height:3px;
+  background:linear-gradient(90deg,var(--amber),var(--amber-bright),transparent);
+}
+.hero-body{padding:18px;}
+.hero-meta{display:flex; align-items:center; gap:9px; margin-bottom:9px; flex-wrap:wrap;}
+.hero-date{font-size:12px; color:var(--muted); font-weight:600; letter-spacing:.3px;}
+.hero-phase{
+  font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--dim);
+  border:1px solid var(--border); padding:2px 7px; border-radius:5px; letter-spacing:.5px;
+}
+.hero-title{
+  font-family:'Barlow Condensed',sans-serif; font-size:27px; font-weight:700;
+  line-height:1.05; margin-bottom:11px; letter-spacing:.3px;
+}
+.hero-desc{font-size:13.5px; color:var(--dim); line-height:1.62; margin-bottom:15px;}
+.stats{display:flex; gap:9px; margin-bottom:14px;}
+.stat{
+  background:var(--bg2); border:1px solid var(--border); border-radius:10px;
+  padding:11px 8px; flex:1; text-align:center;
+}
+.stat-val{font-family:'JetBrains Mono',monospace; font-size:19px; font-weight:700; line-height:1;}
+.stat-val.act{color:var(--amber-bright);}
+.stat-label{font-size:9.5px; color:var(--muted); margin-top:5px; text-transform:uppercase; letter-spacing:.7px;}
+.hero-actions{display:flex; gap:9px;}
+.btn{
+  flex:1; border:none; border-radius:10px; padding:13px; font-size:14px; font-weight:700;
+  cursor:pointer; transition:.15s; font-family:'Inter',sans-serif;
+}
+.btn-primary{background:var(--amber); color:#1a1206;}
+.btn-primary:active{background:var(--amber-bright);}
+.btn-ghost{
+  flex:0 0 auto; background:var(--surface2); border:1px solid var(--border);
+  color:var(--text); padding:13px 16px;
+}
+.btn-ghost:active{border-color:var(--border-amber);}
+
+/* ── Week cards ── */
+.card{
+  background:var(--surface); border:1px solid var(--border); border-radius:12px;
+  padding:13px 14px; margin-bottom:8px; display:flex; gap:13px; align-items:center;
+  cursor:pointer; transition:border-color .15s;
+}
+.card:active{border-color:var(--border-amber);}
+.card.today{border-color:var(--border-amber); background:linear-gradient(90deg,var(--amber-dim),var(--surface) 60%);}
+.card.past{opacity:.62;}
+.card.rest{cursor:default;}
+.daycol{min-width:40px; text-align:center;}
+.dname{font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:600; color:var(--muted); text-transform:uppercase; letter-spacing:.5px;}
+.dnum{font-family:'JetBrains Mono',monospace; font-size:21px; font-weight:700; line-height:1.1;}
+.dnum.t{color:var(--amber-bright);}
+.cbody{flex:1; min-width:0;}
+.ctype{font-size:13.5px; font-weight:600; margin-bottom:3px; display:flex; align-items:center; flex-wrap:wrap; gap:5px;}
+.cdesc{font-size:12px; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+.cright{text-align:right; min-width:50px;}
+.cmiles-a{font-family:'JetBrains Mono',monospace; font-size:16px; font-weight:700; color:var(--amber-bright);}
+.cmiles-p{font-family:'JetBrains Mono',monospace; font-size:14px; color:var(--muted);}
+.ctag{font-size:9px; color:var(--green); margin-top:2px; text-transform:uppercase; letter-spacing:.5px;}
+
+/* ── Badges ── */
+.badge{display:inline-block; font-size:9.5px; font-weight:700; padding:2px 7px; border-radius:5px; text-transform:uppercase; letter-spacing:.5px; font-family:'Barlow Condensed',sans-serif;}
+.b-red{background:rgba(248,81,73,.18); color:#ff9d97;}
+.b-purple{background:rgba(163,113,247,.18); color:#cdb4fa;}
+.b-amber{background:var(--amber-dim); color:var(--amber-bright);}
+.b-green{background:rgba(63,185,80,.16); color:#7ee787;}
+.b-blue{background:rgba(88,166,255,.16); color:#9ecdff;}
+.b-indigo{background:rgba(124,131,255,.18); color:#b3b8ff;}
+.b-gray{background:rgba(125,138,151,.14); color:#9aa6b2;}
+
+/* ── Modal ── */
+.overlay{position:fixed; inset:0; background:rgba(0,0,0,.7); z-index:200; display:flex; align-items:flex-end; justify-content:center; opacity:0; pointer-events:none; transition:opacity .2s;}
+.overlay.open{opacity:1; pointer-events:all;}
+.modal{
+  background:var(--surface); border-top:2px solid var(--amber);
+  border-radius:20px 20px 0 0; width:100%; max-width:500px;
+  max-height:90vh; overflow-y:auto;
+  padding:0 18px 22px; padding-bottom:max(22px,env(safe-area-inset-bottom));
+  transform:translateY(100%); transition:transform .26s cubic-bezier(.4,0,.2,1);
+}
+.overlay.open .modal{transform:translateY(0);}
+.handle{width:38px; height:4px; background:var(--border); border-radius:2px; margin:14px auto 18px;}
+.m-meta{display:flex; gap:8px; align-items:center; margin-bottom:7px; flex-wrap:wrap;}
+.m-date{font-size:12px; color:var(--muted); font-weight:600;}
+.m-title{font-family:'Barlow Condensed',sans-serif; font-size:25px; font-weight:700; line-height:1.08; margin-bottom:12px;}
+.m-desc{font-size:14px; color:var(--dim); line-height:1.66; margin-bottom:16px; white-space:pre-wrap;}
+.m-section{font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:600; letter-spacing:1.2px; text-transform:uppercase; color:var(--amber); margin:18px 0 10px;}
+
+/* strength block */
+.str{background:var(--bg2); border:1px solid var(--border); border-radius:12px; padding:13px 14px; margin-bottom:10px;}
+.str-h{font-size:13px; font-weight:700; margin-bottom:2px;}
+.str-sub{font-size:11px; color:var(--muted); margin-bottom:11px; font-family:'JetBrains Mono',monospace;}
+.ex{display:flex; justify-content:space-between; gap:10px; padding:7px 0; border-top:1px solid var(--border);}
+.ex:first-of-type{border-top:none;}
+.ex-l{flex:1; min-width:0;}
+.ex-n{font-size:13px; font-weight:600;}
+.ex-note{font-size:11px; color:var(--muted); margin-top:1px; line-height:1.4;}
+.ex-s{font-family:'JetBrains Mono',monospace; font-size:11.5px; color:var(--amber-bright); font-weight:700; white-space:nowrap; text-align:right;}
+
+.field{margin-bottom:13px;}
+.field label{display:block; font-size:10.5px; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:.6px; margin-bottom:6px;}
+.field input,.field textarea{width:100%; background:var(--bg2); border:1px solid var(--border); color:var(--text); padding:12px 13px; border-radius:9px; font-size:16px; outline:none; transition:border-color .15s; font-family:inherit;}
+.field input:focus,.field textarea:focus{border-color:var(--amber);}
+.field textarea{resize:none; height:78px; line-height:1.5;}
+.frow{display:flex; gap:9px;}
+.frow .field{flex:1;}
+.m-actions{display:flex; gap:9px; margin-top:6px;}
+.m-actions .btn-cancel{background:var(--surface2); border:1px solid var(--border); color:var(--text); padding:14px 20px; border-radius:10px; font-size:15px; font-weight:600; cursor:pointer;}
+
+/* ── Login ── */
+.login{position:fixed; inset:0; z-index:400; background:var(--bg); display:none; flex-direction:column; align-items:center; justify-content:center; padding:30px;}
+.login.show{display:flex;}
+.login h2{font-family:'Barlow Condensed',sans-serif; font-size:34px; font-weight:700; text-transform:uppercase; letter-spacing:1px; margin-bottom:6px;}
+.login h2 b{color:var(--amber);}
+.login p{color:var(--muted); font-size:13px; margin-bottom:26px;}
+.pin-in{width:200px; text-align:center; font-family:'JetBrains Mono',monospace; font-size:26px; letter-spacing:10px; background:var(--surface); border:1px solid var(--border); color:var(--text); padding:14px; border-radius:12px; outline:none;}
+.pin-in:focus{border-color:var(--amber);}
+.login .btn-primary{flex:0 0 auto; width:200px; margin-top:16px;}
+.login .err{color:var(--red); font-size:13px; height:18px; margin-top:12px;}
+
+/* ── Toast / spinner / skeleton ── */
+.toast{position:fixed; bottom:80px; left:50%; transform:translateX(-50%) translateY(16px); background:var(--surface2); color:var(--text); padding:11px 20px; border-radius:22px; font-size:14px; font-weight:600; opacity:0; transition:.2s; z-index:300; border:1px solid var(--border-amber); pointer-events:none;}
+.toast.show{opacity:1; transform:translateX(-50%) translateY(0);}
+@keyframes spin{to{transform:rotate(360deg);}}
+.spinner{width:13px; height:13px; border:2px solid rgba(232,132,60,.3); border-top-color:var(--amber); border-radius:50%; animation:spin .6s linear infinite; display:inline-block;}
+.skeleton{background:linear-gradient(90deg,var(--surface) 25%,var(--surface2) 50%,var(--surface) 75%); background-size:200% 100%; animation:shimmer 1.2s infinite; border-radius:var(--radius); margin-bottom:8px;}
+@keyframes shimmer{to{background-position:-200% 0;}}
+</style>
+</head>
+<body>
+
+<!-- Login -->
+<div class="login" id="login">
+  <h2>Fat <b>Dog</b> 120</h2>
+  <p>Enter PIN to continue</p>
+  <input class="pin-in" id="pinIn" type="tel" inputmode="numeric" maxlength="8" placeholder="····">
+  <button class="btn btn-primary" onclick="doLogin()">Enter</button>
+  <div class="err" id="pinErr"></div>
+</div>
+
+<div class="wrap">
+  <div class="header">
+    <div class="brand">
+      <h1>Fat <b>Dog</b> 120</h1>
+      <span class="countdown" id="countdown"></span>
+    </div>
+    <button class="sync-btn" id="syncBtn" onclick="stravaSync()">
+      <span id="syncIcon">↻</span> Strava
+    </button>
+  </div>
+
+  <div class="content" id="content">
+    <div class="skeleton" style="height:240px"></div>
+    <div class="skeleton" style="height:64px"></div>
+    <div class="skeleton" style="height:64px"></div>
+    <div class="skeleton" style="height:64px"></div>
+  </div>
+</div>
+
+<!-- Detail + log modal -->
+<div class="overlay" id="overlay" onclick="overlayClick(event)">
+  <div class="modal">
+    <div class="handle"></div>
+    <div class="m-meta"><span class="m-date" id="mDate"></span><span id="mBadge"></span></div>
+    <div class="m-title" id="mTitle"></div>
+    <div class="m-desc" id="mDesc"></div>
+    <div id="mStrength"></div>
+    <div id="mLog">
+      <div class="m-section">Log Actuals</div>
+      <div class="frow">
+        <div class="field"><label>Miles</label><input type="number" step="0.01" id="fMiles" inputmode="decimal" placeholder="0.0"></div>
+        <div class="field"><label>Elev ft</label><input type="number" id="fElev" inputmode="numeric" placeholder="0"></div>
+        <div class="field"><label>Time min</label><input type="number" id="fTime" inputmode="numeric" placeholder="0"></div>
+      </div>
+      <div class="field"><label>Notes / how it felt</label><textarea id="fNotes" placeholder="How did it go?"></textarea></div>
+      <div class="m-actions">
+        <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+        <button class="btn btn-primary" onclick="saveActuals()">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const RACE_DATE = '2026-08-07';
+let weekData = [], currentRow = null, currentDate = null;
+
+const BADGES = [
+  [/race|fat dog (day|120)|finish/i,'b-red','RACE'],
+  [/night run/i,'b-indigo','NIGHT'],
+  [/back.to.back|b2b/i,'b-purple','B2B'],
+  [/long run/i,'b-purple','LONG'],
+  [/hill repeat/i,'b-amber','HILLS'],
+  [/tempo|fartlek|progressive|tune.up/i,'b-amber','QUALITY'],
+  [/deep rec|recovery|rehab/i,'b-green','RECOVERY'],
+  [/strength/i,'b-blue','STRENGTH'],
+  [/swim/i,'b-blue','SWIM'],
+  [/easy|shakeout|strides/i,'b-green','EASY'],
+  [/cross|bike|hike/i,'b-green','CROSS'],
+  [/travel/i,'b-gray','TRAVEL'],
+  [/rest|mobility/i,'b-gray','REST'],
+];
+function badge(type){
+  const t=(type||'').replace(/\*/g,'').trim();
+  for(const [re,cls,label] of BADGES) if(re.test(t)) return `<span class="badge ${cls}">${label}</span>`;
+  return '';
+}
+function clean(t){return (t||'').replace(/\*\*/g,'').replace(/\*/g,'').trim();}
+function fmtLong(iso){return new Date(iso+'T12:00:00').toLocaleDateString('en-US',{weekday:'long',month:'short',day:'numeric'});}
+function shortD(iso){const d=new Date(iso+'T12:00:00');return {day:d.toLocaleDateString('en-US',{weekday:'short'}).toUpperCase(),num:d.getDate()};}
+function hasAct(r){return r.actual_miles && r.actual_miles!=='-' && r.actual_miles!=='';}
+function isRest(r){const t=clean(r.type).toLowerCase(); return (/^(rest|full rest|travel|rest\/mobility)/.test(t)) || (r.planned_miles==='-' && !/strength|swim|bike|hike|cross|night/i.test(r.type+r.cross));}
+function strengthKey(r){
+  // Which strength session applies to this day, if any.
+  const blob=(r.type+' '+r.cross+' '+r.desc).toLowerCase();
+  if(!/strength/.test(blob)) return null;
+  const wd=new Date(r.date+'T12:00:00').getDay(); // 0 Sun .. 6 Sat
+  if(wd===1) return 'MON';
+  if(wd===2) return 'TUE';
+  if(wd===3) return 'TUE';   // main shifts to Wed some weeks
+  if(wd===4) return 'THU';
+  return 'THU';
+}
+
+function setCountdown(){
+  const days=Math.round((new Date(RACE_DATE+'T00:00:00')-new Date())/864e5);
+  document.getElementById('countdown').textContent = days>0 ? `T-${days} DAYS` : 'RACE WEEK';
+}
+
+// ── Render ──
+function renderHero(r){
+  const act=hasAct(r), rest=isRest(r);
+  return `
+  <div class="hero" onclick="openModal('${r.date}')">
+    <div class="hero-body">
+      <div class="hero-meta">
+        <span class="hero-date">${fmtLong(r.date)}</span>
+        ${badge(r.type)}
+        ${r.phase?`<span class="hero-phase">${clean(r.phase)}</span>`:''}
+      </div>
+      <div class="hero-title">${clean(r.type)}</div>
+      <div class="hero-desc">${clean(r.desc)}</div>
+      <div class="stats">
+        <div class="stat"><div class="stat-val ${act?'act':''}">${act?r.actual_miles:(r.planned_miles!=='-'?r.planned_miles:'—')}</div><div class="stat-label">${act?'actual mi':'planned mi'}</div></div>
+        ${act
+          ? `<div class="stat"><div class="stat-val act">${r.actual_elev||'—'}</div><div class="stat-label">elev ft</div></div>
+             <div class="stat"><div class="stat-val act">${r.actual_time||'—'}</div><div class="stat-label">minutes</div></div>`
+          : `<div class="stat"><div class="stat-val">${r.cross&&r.cross!=='-'?clean(r.cross).split(' ').slice(0,2).join(' '):'—'}</div><div class="stat-label">cross-train</div></div>
+             <div class="stat"><div class="stat-val">${act?'':'·'}</div><div class="stat-label">tap to log</div></div>`}
+      </div>
+      <div class="hero-actions">
+        <button class="btn btn-primary">${act?'Edit actuals':(rest?'View day':'Log workout')}</button>
+      </div>
+    </div>
+  </div>`;
+}
+function renderCard(r){
+  const {day,num}=shortD(r.date), act=hasAct(r);
+  const cls=['card', r.is_today?'today':'', r.is_past?'past':''].filter(Boolean).join(' ');
+  return `
+  <div class="${cls}" onclick="openModal('${r.date}')">
+    <div class="daycol"><div class="dname">${day}</div><div class="dnum ${r.is_today?'t':''}">${num}</div></div>
+    <div class="cbody">
+      <div class="ctype">${clean(r.type)} ${badge(r.type)}</div>
+      <div class="cdesc">${clean(r.desc).slice(0,72)}${r.desc.length>72?'…':''}</div>
+    </div>
+    <div class="cright">
+      ${act
+        ? `<div class="cmiles-a">${r.actual_miles}</div><div class="ctag">✓ logged</div>`
+        : `<div class="cmiles-p">${r.planned_miles!=='-'?r.planned_miles+' mi':'—'}</div>`}
+    </div>
+  </div>`;
+}
+
+async function loadWeek(){
+  const today = new Date();
+  const iso = today.getFullYear()+'-'+String(today.getMonth()+1).padStart(2,'0')+'-'+String(today.getDate()).padStart(2,'0');
+  const res = await fetch('/api/week?date='+iso);
+  if(res.status===401){showLogin(); return;}
+  const {week} = await res.json();
+  weekData = week;
+  const todayRow = week.find(r=>r.is_today);
+  const others = week.filter(r=>!r.is_today);
+  let html='';
+  if(todayRow){ html+='<div class="section-label">Today</div>'+renderHero(todayRow)+'<div class="section-label">This Week</div>'; }
+  else html+='<div class="section-label">This Week</div>';
+  others.forEach(r=>html+=renderCard(r));
+  if(!week.length) html='<div class="section-label">This Week</div><p style="color:var(--muted);font-size:13px;padding:0 2px">No workouts scheduled this week.</p>';
+  document.getElementById('content').innerHTML=html;
+}
+
+// ── Modal ──
+async function openModal(dateStr){
+  const r = weekData.find(x=>x.date===dateStr);
+  if(!r) return;
+  currentRow=r.row_number; currentDate=dateStr;
+  document.getElementById('mDate').textContent=fmtLong(dateStr);
+  document.getElementById('mBadge').innerHTML=badge(r.type);
+  document.getElementById('mTitle').textContent=clean(r.type);
+  document.getElementById('mDesc').textContent=clean(r.desc);
+  document.getElementById('fMiles').value = hasAct(r)?r.actual_miles:'';
+  document.getElementById('fElev').value  = r.actual_elev&&r.actual_elev!=='-'?r.actual_elev:'';
+  document.getElementById('fTime').value  = r.actual_time&&r.actual_time!=='-'?r.actual_time:'';
+  document.getElementById('fNotes').value = r.notes&&r.notes!=='-'?r.notes:'';
+  document.getElementById('mStrength').innerHTML='';
+  document.getElementById('overlay').classList.add('open');
+
+  const sk = strengthKey(r);
+  if(sk){
+    try{
+      const sres = await fetch('/api/strength/'+sk);
+      if(sres.ok){ renderStrength(await sres.json()); }
+    }catch{}
+  }
+}
+function exHtml(e){
+  return `<div class="ex"><div class="ex-l"><div class="ex-n">${e.name}</div>${e.notes?`<div class="ex-note">${e.notes}</div>`:''}</div><div class="ex-s">${e.scheme}</div></div>`;
+}
+function renderStrength(s){
+  let h='<div class="m-section">💪 Strength — '+s.title.replace(/^[^—]*—\s*/,'')+'</div>';
+  h+='<div class="str"><div class="str-h">'+s.anchor.label+'</div><div class="str-sub">do first</div>'+s.anchor.exercises.map(exHtml).join('')+'</div>';
+  h+='<div class="str"><div class="str-h">'+s.title+'</div><div class="str-sub">'+s.duration+'</div>'+s.exercises.map(exHtml).join('')+'</div>';
+  document.getElementById('mStrength').innerHTML=h;
+}
+function closeModal(){document.getElementById('overlay').classList.remove('open'); currentRow=null;}
+function overlayClick(e){if(e.target===document.getElementById('overlay'))closeModal();}
+
+async function saveActuals(){
+  if(!currentRow) return;
+  const res=await fetch('/api/log',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
+    row_number:currentRow,
+    actual_miles:document.getElementById('fMiles').value,
+    actual_elev:document.getElementById('fElev').value,
+    actual_time:document.getElementById('fTime').value,
+    notes:document.getElementById('fNotes').value,
+  })});
+  const {ok}=await res.json();
+  closeModal();
+  showToast(ok?'Saved ✓':'Error saving');
+  if(ok) loadWeek();
+}
+
+// ── Strava ──
+async function stravaSync(){
+  const btn=document.getElementById('syncBtn'), icon=document.getElementById('syncIcon');
+  btn.classList.add('loading'); icon.innerHTML='<span class="spinner"></span>';
+  try{
+    const res=await fetch('/api/strava-sync',{method:'POST'});
+    const {ok,updated,error}=await res.json();
+    showToast(ok?(updated?`Synced ${updated} day${updated>1?'s':''} ✓`:'Up to date ✓'):'Sync failed: '+(error||'?'));
+    if(ok) loadWeek();
+  }catch{ showToast('Sync error'); }
+  finally{ btn.classList.remove('loading'); icon.innerHTML='↻'; }
+}
+
+// ── Toast ──
+function showToast(m){const t=document.getElementById('toast'); t.textContent=m; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2600);}
+
+// ── Login ──
+function showLogin(){document.getElementById('login').classList.add('show'); setTimeout(()=>document.getElementById('pinIn').focus(),100);}
+async function doLogin(){
+  const pin=document.getElementById('pinIn').value;
+  const res=await fetch('/api/auth',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({pin})});
+  if(res.ok){document.getElementById('login').classList.remove('show'); boot();}
+  else{document.getElementById('pinErr').textContent='Wrong PIN'; document.getElementById('pinIn').value='';}
+}
+document.getElementById('pinIn').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
+
+// ── Boot ──
+async function boot(){
+  setCountdown();
+  const me=await (await fetch('/api/me')).json();
+  if(me.pin_required && !me.authenticated){ showLogin(); return; }
+  loadWeek();
+}
+if('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js').catch(()=>{});
+boot();
+</script>
+</body>
+</html>

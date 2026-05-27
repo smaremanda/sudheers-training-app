@@ -1,0 +1,13 @@
+# Secrets — never commit these
+*.json
+.env
+.env.*
+
+# Allow the PWA manifest if it ever becomes a file (currently served dynamically)
+!manifest.json
+
+__pycache__/
+*.pyc
+.venv/
+venv/
+.DS_Store
