@@ -35,7 +35,7 @@ HERE          = Path(__file__).parent
 PROJECT_DIR   = HERE.parent                       # the "Fat Dog 120 - Training Plan" folder
 PLAN_FILE     = PROJECT_DIR / "Fat_Dog_2026_Training_Plan.md"
 TOKENS_FILE   = PROJECT_DIR / ".strava_tokens.json"
-CREDS_FILE    = PROJECT_DIR / "sudheers-training-6e0b92f73bc7.json"
+CREDS_FILE    = PROJECT_DIR / "sudheers-training-6b0b31ea0f48.json"
 
 SHEET_ID      = "1eUiLCexi_GIw_KVeliambvQLSLM07IABR6sH9PkxLxM"
 PLAN_TAB      = "Plan"
