@@ -184,6 +184,63 @@ def api_log():
     return jsonify({"ok": True, "row": row_number})
 
 
+EDITABLE_FIELDS = {
+    "phase":         "C", "type":         "D", "desc":         "E",
+    "planned_miles": "F", "cross":        "G",
+    "actual_miles":  "H", "actual_elev":  "I",
+    "actual_time":   "J", "notes":        "K",
+}
+
+
+@app.route("/api/admin/edit", methods=["POST"])
+@login_required
+def api_admin_edit():
+    """Batch-edit Plan tab cells by date + field.
+
+    Body: { "edits": [
+        {"date": "YYYY-MM-DD", "field": "<one of EDITABLE_FIELDS>", "value": "<str>"},
+        ...
+    ] }
+
+    Date must already exist in the Plan tab — this endpoint does NOT create
+    new rows. Empty value clears the cell. Errors per-edit are reported but
+    do not abort the batch.
+    """
+    data = request.json or {}
+    edits = data.get("edits") or []
+    if not edits:
+        return jsonify({"error": "edits[] required"}), 400
+
+    svc = get_service()
+    res = svc.spreadsheets().values().get(
+        spreadsheetId=SHEET_ID, range=f"{PLAN_TAB}!A2:A2000").execute()
+    date_rows = {(r[0].strip() if r else ""): i + 2
+                 for i, r in enumerate(res.get("values", []))}
+
+    updates, applied, errors = [], [], []
+    for e in edits:
+        d = (e.get("date") or "").strip()
+        f = (e.get("field") or "").strip().lower()
+        v = "" if e.get("value") is None else str(e["value"])
+        if f not in EDITABLE_FIELDS:
+            errors.append({"edit": e, "reason": f"field '{f}' not editable"})
+            continue
+        if d not in date_rows:
+            errors.append({"edit": e, "reason": f"date {d} not in Plan"})
+            continue
+        row = date_rows[d]
+        col = EDITABLE_FIELDS[f]
+        updates.append({"range": f"{PLAN_TAB}!{col}{row}", "values": [[v]]})
+        applied.append({"date": d, "field": f, "row": row, "col": col, "value": v})
+
+    if updates:
+        svc.spreadsheets().values().batchUpdate(
+            spreadsheetId=SHEET_ID,
+            body={"valueInputOption": "USER_ENTERED", "data": updates}).execute()
+
+    return jsonify({"ok": True, "applied": applied, "errors": errors})
+
+
 @app.route("/api/strava-sync", methods=["POST"])
 @login_required
 def api_strava_sync():
