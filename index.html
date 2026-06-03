@@ -290,8 +290,9 @@ function shortD(iso){const d=new Date(iso+'T12:00:00');return {day:d.toLocaleDat
 function hasAct(r){return r.actual_miles && r.actual_miles!=='-' && r.actual_miles!=='';}
 function isRest(r){const t=clean(r.type).toLowerCase(); return (/^(rest|full rest|travel|rest\/mobility)/.test(t)) || (r.planned_miles==='-' && !/strength|swim|bike|hike|cross|night/i.test(r.type+r.cross));}
 function strengthKey(r){
-  // Which strength session applies to this day, if any.
+  // Which strength/rehab session applies to this day, if any.
   const blob=(r.type+' '+r.cross+' '+r.desc).toLowerCase();
+  if(/knee rehab|rehab focus/.test(blob)) return 'KNEE_REHAB';
   if(!/strength/.test(blob)) return null;
   const wd=new Date(r.date+'T12:00:00').getDay(); // 0 Sun .. 6 Sat
   if(wd===1) return 'MON';

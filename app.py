@@ -314,6 +314,15 @@ STRENGTH = {
             {"name": "Sciatic nerve floss", "scheme": "2×10 each leg", "notes": "Rest days only. Gentle, not a stretch."},
         ],
     },
+    "KNEE_REHAB": {
+        "title": "Knee Rehab Daily (Focus Week)",
+        "duration": "~10 min, 2x/day (1x lighter on rest days)",
+        "exercises": [
+            {"name": "Banded clamshells", "scheme": "3×15/side", "notes": "Slow, controlled. Glute med activation."},
+            {"name": "Spanish squat / wall sit w/ heel raise", "scheme": "3×45 sec", "notes": "Isometric quad, knee-friendly."},
+            {"name": "Single-leg glute bridge", "scheme": "3×12/side · 2-1-2", "notes": "Right-side emphasis. Slow tempo."},
+        ],
+    },
 }
 
 
