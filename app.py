@@ -257,83 +257,75 @@ def api_strava_sync():
         return jsonify({"ok": False, "error": str(e)}), 500
 
 
-# ── Strength workouts ──────────────────────────────────────────────────────────
-ANCHOR = {
-    "label": "Anchor — every session (~6–8 min)",
-    "exercises": [
-        {"name": "Cobras", "scheme": "3×20", "notes": "Spine warm-up. Press up, gentle extension."},
-        {"name": "Left hip stretch", "scheme": "1×60 sec", "notes": "PT-prescribed. Left side only."},
-        {"name": "Tibialis anterior raises", "scheme": "3×20 · 2-1-2", "notes": "Shin prevention. Add band when easy."},
-        {"name": "Calf raises (straight knee)", "scheme": "3×15 · 3-1-3", "notes": "Gastroc. Add 5–10 lb when easy."},
-        {"name": "Calf raises (bent knee)", "scheme": "3×15 · 3-1-3", "notes": "Soleus. Add 5–10 lb when easy."},
-    ],
-}
+# ── Weekly program ────────────────────────────────────────────────────────────
+# ONE flat per-day list. The Reminders sync script imports WEEKLY_PROGRAM from
+# here so there's a single source of truth across the live app + iOS Reminders.
+# To change the week's focus: swap which BLOCK appears on Mon/Tue/Wed/Thu and
+# (optionally) Sat. Then `git push` (auto-deploys) and run `sync_reminders.py`.
 
-STRENGTH = {
-    "MON": {
-        "title": "Monday — Posterior Chain + Hips/Glutes",
-        "duration": "~30 min",
-        "exercises": [
-            {"name": "Single-leg RDL", "scheme": "3×10 each · 2-1-2", "notes": "Hamstring hip-hinge. Light dumbbell."},
-            {"name": "Step-ups (loaded)", "scheme": "3×10 each", "notes": "Glute/quad. Add weight or height."},
-            {"name": "Single-leg glute bridge", "scheme": "3×12 each · 2-1-2", "notes": "Glute max. Slow, controlled."},
-            {"name": "Hip abduction band walks", "scheme": "3×15 each dir", "notes": "Glute med / hip stability."},
-            {"name": "Side plank", "scheme": "3×40 sec each", "notes": "Lateral core. Progress to 60 sec."},
-            {"name": "Pallof press", "scheme": "3×12 each side · 2-1-2", "notes": "Anti-rotation core."},
-        ],
-    },
-    "TUE": {
-        "title": "Tuesday — Quads + Knee + Balance (Downhill Prep)",
-        "duration": "~30 min",
-        "exercises": [
-            {"name": "Bulgarian split squat", "scheme": "3×8 each", "notes": "Main quad/glute load."},
-            {"name": "Reverse Nordic", "scheme": "3×8 · slow", "notes": "Quad eccentric, knees-over-toes. Start bodyweight."},
-            {"name": "Step-downs", "scheme": "3×10 each · 3-1-1", "notes": "Eccentric quad, downhill-specific. Lower slowly."},
-            {"name": "Spanish squat / wall sit w/ heel raise", "scheme": "3×40 sec", "notes": "Isometric quad, knee-friendly."},
-            {"name": "Pistol taps / MOBO board", "scheme": "3×8 each · or 2×60 sec", "notes": "Pick one. Single-leg balance."},
-        ],
-    },
-    "THU": {
-        "title": "Thursday — Mini Maintenance",
-        "duration": "~15–20 min (after easy run)",
-        "exercises": [
-            {"name": "Single-leg glute bridge", "scheme": "3×10 each · 2-1-2", "notes": "Glute max."},
-            {"name": "Banded clamshells", "scheme": "2×15 each", "notes": "Glute med."},
-            {"name": "Reverse step-up / wall sit", "scheme": "2–3 sets", "notes": "One quad/knee touch."},
-            {"name": "Side plank", "scheme": "2×30 sec each", "notes": "Core."},
-        ],
-    },
-    "REHAB": {
-        "title": "Pre-Run Rehab Warm-up",
-        "duration": "10–12 min, before any run",
-        "exercises": [
-            {"name": "Ankle dorsiflexion wall drill", "scheme": "2×10 each leg", "notes": "Heel down, knee tracks over toe."},
-            {"name": "Hip 90/90 mobility", "scheme": "2×60 sec each side", "notes": "Both sides."},
-            {"name": "Banded clamshells", "scheme": "2×15 each side", "notes": "Glute med activation."},
-            {"name": "Single-leg glute bridge", "scheme": "2×10 each", "notes": "Slow, controlled."},
-            {"name": "Sciatic nerve floss", "scheme": "2×10 each leg", "notes": "Rest days only. Gentle, not a stretch."},
-        ],
-    },
-    "KNEE_REHAB": {
-        "title": "Knee Rehab Daily (Focus Week)",
-        "duration": "~10 min, 2x/day (1x lighter on rest days)",
-        "exercises": [
-            {"name": "Banded clamshells", "scheme": "3×15/side", "notes": "Slow, controlled. Glute med activation."},
-            {"name": "Spanish squat / wall sit w/ heel raise", "scheme": "3×45 sec", "notes": "Isometric quad, knee-friendly."},
-            {"name": "Single-leg glute bridge", "scheme": "3×12/side · 2-1-2", "notes": "Right-side emphasis. Slow tempo."},
-        ],
-    },
+ANCHOR_EXERCISES = [
+    {"name": "Cobras", "scheme": "3×20", "notes": "Spine warm-up."},
+    {"name": "Left hip stretch", "scheme": "1×60 sec", "notes": "PT-prescribed, left only."},
+    {"name": "Tibialis anterior raises", "scheme": "3×20 · 2-1-2", "notes": "Shin prevention."},
+    {"name": "Calf raises (straight knee)", "scheme": "3×15 · 3-1-3", "notes": "Gastroc."},
+    {"name": "Calf raises (bent knee)", "scheme": "3×15 · 3-1-3", "notes": "Soleus."},
+]
+
+KNEE_REHAB_BLOCK = [
+    {"name": "Banded clamshells", "scheme": "3×15/side", "notes": "Glute med — upstream fix."},
+    {"name": "Spanish squat / wall sit w/ heel raise", "scheme": "3×45 sec", "notes": "Isometric quad, knee-friendly."},
+    {"name": "Single-leg glute bridge", "scheme": "3×12/side · 2-1-2", "notes": "Right-side emphasis."},
+]
+
+# Reference blocks for post-rehab-focus weeks (from Strength_Workouts.md).
+# Not used right now — swap in when knee rehab focus ends.
+MON_BLOCK = [
+    {"name": "Single-leg RDL", "scheme": "3×10 each · 2-1-2", "notes": "Hamstring hip-hinge. Light dumbbell."},
+    {"name": "Step-ups (loaded)", "scheme": "3×10 each", "notes": "Glute/quad. Add weight or height."},
+    {"name": "Single-leg glute bridge", "scheme": "3×12 each · 2-1-2", "notes": "Glute max. Slow, controlled."},
+    {"name": "Hip abduction band walks", "scheme": "3×15 each dir", "notes": "Glute med / hip stability."},
+    {"name": "Side plank", "scheme": "3×40 sec each", "notes": "Lateral core. Progress to 60 sec."},
+    {"name": "Pallof press", "scheme": "3×12 each side · 2-1-2", "notes": "Anti-rotation core."},
+]
+TUE_BLOCK = [
+    {"name": "Bulgarian split squat", "scheme": "3×8 each", "notes": "Main quad/glute load."},
+    {"name": "Reverse Nordic", "scheme": "3×8 · slow", "notes": "Quad eccentric, knees-over-toes."},
+    {"name": "Step-downs", "scheme": "3×10 each · 3-1-1", "notes": "Eccentric quad, downhill-specific."},
+    {"name": "Spanish squat / wall sit w/ heel raise", "scheme": "3×40 sec", "notes": "Isometric quad, knee-friendly."},
+    {"name": "Pistol taps / MOBO board", "scheme": "3×8 each · or 2×60 sec", "notes": "Pick one. Single-leg balance."},
+]
+THU_BLOCK = [
+    {"name": "Single-leg glute bridge", "scheme": "3×10 each · 2-1-2", "notes": "Glute max."},
+    {"name": "Banded clamshells", "scheme": "2×15 each", "notes": "Glute med."},
+    {"name": "Reverse step-up / wall sit", "scheme": "2–3 sets", "notes": "One quad/knee touch."},
+    {"name": "Side plank", "scheme": "2×30 sec each", "notes": "Core."},
+]
+
+# Current week (knee-rehab focus): Mon-Thu = anchor + knee rehab; Sat = anchor
+# only (long-run warmup); Fri/Sun = rest.
+WEEKLY_PROGRAM = {
+    "MON": {"title": "Mon — Rehab + anchor", "duration": "~15 min, 2x/day",
+            "exercises": ANCHOR_EXERCISES + KNEE_REHAB_BLOCK},
+    "TUE": {"title": "Tue — Rehab + anchor", "duration": "~15 min, 2x/day",
+            "exercises": ANCHOR_EXERCISES + KNEE_REHAB_BLOCK},
+    "WED": {"title": "Wed — Rehab + anchor", "duration": "~15 min, 2x/day",
+            "exercises": ANCHOR_EXERCISES + KNEE_REHAB_BLOCK},
+    "THU": {"title": "Thu — Rehab + anchor", "duration": "~15 min, 2x/day",
+            "exercises": ANCHOR_EXERCISES + KNEE_REHAB_BLOCK},
+    "FRI": {"title": "Fri — Rest",          "duration": "",                  "exercises": []},
+    "SAT": {"title": "Sat — Long-run warmup", "duration": "~6 min",
+            "exercises": ANCHOR_EXERCISES},
+    "SUN": {"title": "Sun — Easy hike",      "duration": "",                  "exercises": []},
 }
 
 
-@app.route("/api/strength/<session_key>")
+@app.route("/api/day/<dow>")
 @login_required
-def api_strength(session_key):
-    key = session_key.upper()
-    if key not in STRENGTH:
-        return jsonify({"error": f"unknown session: {session_key}"}), 404
-    block = dict(STRENGTH[key])
-    block["anchor"] = ANCHOR
+def api_day(dow):
+    key = dow.upper()
+    block = WEEKLY_PROGRAM.get(key)
+    if not block or not block["exercises"]:
+        return jsonify({"error": f"no exercises for {dow}"}), 404
     return jsonify(block)
 
 

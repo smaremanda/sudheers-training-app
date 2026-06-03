@@ -289,17 +289,10 @@ function fmtLong(iso){return new Date(iso+'T12:00:00').toLocaleDateString('en-US
 function shortD(iso){const d=new Date(iso+'T12:00:00');return {day:d.toLocaleDateString('en-US',{weekday:'short'}).toUpperCase(),num:d.getDate()};}
 function hasAct(r){return r.actual_miles && r.actual_miles!=='-' && r.actual_miles!=='';}
 function isRest(r){const t=clean(r.type).toLowerCase(); return (/^(rest|full rest|travel|rest\/mobility)/.test(t)) || (r.planned_miles==='-' && !/strength|swim|bike|hike|cross|night/i.test(r.type+r.cross));}
-function strengthKey(r){
-  // Which strength/rehab session applies to this day, if any.
-  const blob=(r.type+' '+r.cross+' '+r.desc).toLowerCase();
-  if(/knee rehab|rehab focus/.test(blob)) return 'KNEE_REHAB';
-  if(!/strength/.test(blob)) return null;
-  const wd=new Date(r.date+'T12:00:00').getDay(); // 0 Sun .. 6 Sat
-  if(wd===1) return 'MON';
-  if(wd===2) return 'TUE';
-  if(wd===3) return 'TUE';   // main shifts to Wed some weeks
-  if(wd===4) return 'THU';
-  return 'THU';
+function dayKey(r){
+  // Day-of-week → WEEKLY_PROGRAM key. Always returns a key; the API decides
+  // whether there are exercises (rest days → 404 → panel hidden).
+  return ['SUN','MON','TUE','WED','THU','FRI','SAT'][new Date(r.date+'T12:00:00').getDay()];
 }
 
 function setCountdown(){
@@ -385,21 +378,19 @@ async function openModal(dateStr){
   document.getElementById('mStrength').innerHTML='';
   document.getElementById('overlay').classList.add('open');
 
-  const sk = strengthKey(r);
-  if(sk){
-    try{
-      const sres = await fetch('/api/strength/'+sk);
-      if(sres.ok){ renderStrength(await sres.json()); }
-    }catch{}
-  }
+  // Per-day flat list — single card. 404 on rest days = panel stays empty.
+  try{
+    const sres = await fetch('/api/day/'+dayKey(r));
+    if(sres.ok){ renderDay(await sres.json()); }
+  }catch{}
 }
 function exHtml(e){
   return `<div class="ex"><div class="ex-l"><div class="ex-n">${e.name}</div>${e.notes?`<div class="ex-note">${e.notes}</div>`:''}</div><div class="ex-s">${e.scheme}</div></div>`;
 }
-function renderStrength(s){
-  let h='<div class="m-section">💪 Strength — '+s.title.replace(/^[^—]*—\s*/,'')+'</div>';
-  h+='<div class="str"><div class="str-h">'+s.anchor.label+'</div><div class="str-sub">do first</div>'+s.anchor.exercises.map(exHtml).join('')+'</div>';
-  h+='<div class="str"><div class="str-h">'+s.title+'</div><div class="str-sub">'+s.duration+'</div>'+s.exercises.map(exHtml).join('')+'</div>';
+function renderDay(s){
+  if(!s.exercises || !s.exercises.length) return;
+  let h='<div class="m-section">💪 '+s.title+'</div>';
+  h+='<div class="str">'+(s.duration?'<div class="str-sub">'+s.duration+'</div>':'')+s.exercises.map(exHtml).join('')+'</div>';
   document.getElementById('mStrength').innerHTML=h;
 }
 function closeModal(){document.getElementById('overlay').classList.remove('open'); currentRow=null;}
