@@ -32,7 +32,7 @@ from googleapiclient.discovery import build
 
 # ── Paths & config ──────────────────────────────────────────────────────────
 HERE          = Path(__file__).parent
-PROJECT_DIR   = HERE.parent                       # the "Fat Dog 120 - Training Plan" folder
+PROJECT_DIR   = HERE.parent                       # the "Ultra Coaching Plan" folder
 PLAN_FILE     = PROJECT_DIR / "Fat_Dog_2026_Training_Plan.md"
 TOKENS_FILE   = PROJECT_DIR / ".strava_tokens.json"
 CREDS_FILE    = PROJECT_DIR / "sudheers-training-6b0b31ea0f48.json"
