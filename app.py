@@ -333,18 +333,18 @@ UPPER_BODY_B = [
 WEEKLY_PROGRAM = {
     "MON": {"title": "Mon — Bike + Upper Body A", "duration": "~45 min total",
             "exercises": ANCHOR_EXERCISES + KNEE_REHAB_BLOCK + BIKE_NOTE + UPPER_BODY_A},
-    "TUE": {"title": "Tue — Yoga", "duration": "~15 min rehab + yoga",
-            "exercises": ANCHOR_EXERCISES + KNEE_REHAB_BLOCK + YOGA_NOTE},
+    "TUE": {"title": "Tue — Yoga", "duration": "~20-30 min",
+            "exercises": YOGA_NOTE},
     "WED": {"title": "Wed — Bike + Upper Body B", "duration": "~45 min total",
             "exercises": ANCHOR_EXERCISES + KNEE_REHAB_BLOCK + BIKE_NOTE + UPPER_BODY_B},
-    "THU": {"title": "Thu — Rest / family walk", "duration": "~15 min",
-            "exercises": ANCHOR_EXERCISES + KNEE_REHAB_BLOCK},
-    "FRI": {"title": "Fri — Yoga", "duration": "~15 min rehab + yoga",
-            "exercises": ANCHOR_EXERCISES + KNEE_REHAB_BLOCK + YOGA_NOTE},
+    "THU": {"title": "Thu — Rest / family walk", "duration": "",
+            "exercises": []},
+    "FRI": {"title": "Fri — Yoga", "duration": "~20-30 min",
+            "exercises": YOGA_NOTE},
     "SAT": {"title": "Sat — Bike (long)", "duration": "~15 min + bike",
             "exercises": ANCHOR_EXERCISES + KNEE_REHAB_BLOCK + BIKE_NOTE},
-    "SUN": {"title": "Sun — Rest / family walk", "duration": "~15 min",
-            "exercises": ANCHOR_EXERCISES + KNEE_REHAB_BLOCK},
+    "SUN": {"title": "Sun — Rest / family walk", "duration": "",
+            "exercises": []},
 }
 
 
