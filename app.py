@@ -301,21 +301,50 @@ THU_BLOCK = [
     {"name": "Side plank", "scheme": "2×30 sec each", "notes": "Core."},
 ]
 
-# Current week (knee-rehab focus): Mon-Thu = anchor + knee rehab; Sat = anchor
-# only (long-run warmup); Fri/Sun = rest.
+# Post-Dark Divide, pre-MRI cross-training block (2026-09-14). No running —
+# right knee "popped" at mile 101 (suspected meniscus tear, MRI pending).
+# Upper body + easy bike + yoga + the same knee rehab that's been tolerated
+# for months. Holding pattern, not a progression — swap back to MON/TUE/THU
+# _BLOCK once running resumes.
+BIKE_NOTE = [
+    {"name": "Easy spin (see today's plan for duration)", "scheme": "Zone 2, cadence 85-95",
+     "notes": "Seat higher than running setup to limit knee flexion. Light resistance, no standing climbs. Stop on any knee response."},
+]
+
+YOGA_NOTE = [
+    {"name": "Gentle flow / restorative yoga", "scheme": "20-30 min",
+     "notes": "Avoid pigeon pose, deep hero's pose, kneeling twists, deep lunges on the right side — anything loading a flexed+rotated knee."},
+]
+
+UPPER_BODY_A = [
+    {"name": "Push-ups or DB bench press", "scheme": "3×10-12", "notes": "Chest/triceps."},
+    {"name": "DB overhead press", "scheme": "3×10", "notes": "Shoulders."},
+    {"name": "Triceps (dips or extensions)", "scheme": "3×12", "notes": ""},
+    {"name": "Plank", "scheme": "3×40-60 sec", "notes": "Core."},
+]
+
+UPPER_BODY_B = [
+    {"name": "DB rows", "scheme": "3×10-12 each", "notes": "Back."},
+    {"name": "Band or bar pull-ups/lat work", "scheme": "3×10-12", "notes": ""},
+    {"name": "Biceps curls", "scheme": "3×12", "notes": ""},
+    {"name": "Side plank", "scheme": "3×30-40 sec each", "notes": "Anti-rotation core."},
+]
+
 WEEKLY_PROGRAM = {
-    "MON": {"title": "Mon — Rehab + anchor", "duration": "~15 min, 2x/day",
+    "MON": {"title": "Mon — Bike + Upper Body A", "duration": "~45 min total",
+            "exercises": ANCHOR_EXERCISES + KNEE_REHAB_BLOCK + BIKE_NOTE + UPPER_BODY_A},
+    "TUE": {"title": "Tue — Yoga", "duration": "~15 min rehab + yoga",
+            "exercises": ANCHOR_EXERCISES + KNEE_REHAB_BLOCK + YOGA_NOTE},
+    "WED": {"title": "Wed — Bike + Upper Body B", "duration": "~45 min total",
+            "exercises": ANCHOR_EXERCISES + KNEE_REHAB_BLOCK + BIKE_NOTE + UPPER_BODY_B},
+    "THU": {"title": "Thu — Rest / family walk", "duration": "~15 min",
             "exercises": ANCHOR_EXERCISES + KNEE_REHAB_BLOCK},
-    "TUE": {"title": "Tue — Rehab + anchor", "duration": "~15 min, 2x/day",
+    "FRI": {"title": "Fri — Yoga", "duration": "~15 min rehab + yoga",
+            "exercises": ANCHOR_EXERCISES + KNEE_REHAB_BLOCK + YOGA_NOTE},
+    "SAT": {"title": "Sat — Bike (long)", "duration": "~15 min + bike",
+            "exercises": ANCHOR_EXERCISES + KNEE_REHAB_BLOCK + BIKE_NOTE},
+    "SUN": {"title": "Sun — Rest / family walk", "duration": "~15 min",
             "exercises": ANCHOR_EXERCISES + KNEE_REHAB_BLOCK},
-    "WED": {"title": "Wed — Rehab + anchor", "duration": "~15 min, 2x/day",
-            "exercises": ANCHOR_EXERCISES + KNEE_REHAB_BLOCK},
-    "THU": {"title": "Thu — Rehab + anchor", "duration": "~15 min, 2x/day",
-            "exercises": ANCHOR_EXERCISES + KNEE_REHAB_BLOCK},
-    "FRI": {"title": "Fri — Rest",          "duration": "",                  "exercises": []},
-    "SAT": {"title": "Sat — Long-run warmup", "duration": "~6 min",
-            "exercises": ANCHOR_EXERCISES},
-    "SUN": {"title": "Sun — Easy hike",      "duration": "",                  "exercises": []},
 }
 
 
