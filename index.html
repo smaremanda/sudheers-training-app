@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Fat Dog">
-<title>Fat Dog 120</title>
+<meta name="apple-mobile-web-app-title" content="FURY">
+<title>FURY</title>
 <link rel="manifest" href="/manifest.json">
 <link rel="apple-touch-icon" href="/icon-180.png">
 <link rel="icon" type="image/png" href="/icon-192.png">
@@ -49,7 +49,7 @@ body::before{
   letter-spacing:.5px; text-transform:uppercase; line-height:1;
 }
 .brand h1 b{color:var(--amber);}
-.countdown{
+.tagline{
   font-family:'JetBrains Mono',monospace; font-size:11px; font-weight:700;
   color:var(--amber-bright); background:var(--amber-dim);
   padding:3px 8px; border-radius:6px; letter-spacing:.5px; white-space:nowrap;
@@ -208,7 +208,7 @@ body::before{
 
 <!-- Login -->
 <div class="login" id="login">
-  <h2>Fat <b>Dog</b> 120</h2>
+  <h2><b>FURY</b></h2>
   <p>Enter PIN to continue</p>
   <input class="pin-in" id="pinIn" type="tel" inputmode="numeric" maxlength="8" placeholder="····">
   <button class="btn btn-primary" onclick="doLogin()">Enter</button>
@@ -218,8 +218,8 @@ body::before{
 <div class="wrap">
   <div class="header">
     <div class="brand">
-      <h1>Fat <b>Dog</b> 120</h1>
-      <span class="countdown" id="countdown"></span>
+      <h1><b>FURY</b></h1>
+      <span class="tagline">FOR ULTRA RUNNING AND YOU</span>
     </div>
     <button class="sync-btn" id="syncBtn" onclick="stravaSync()">
       <span id="syncIcon">↻</span> Strava
@@ -261,7 +261,6 @@ body::before{
 <div class="toast" id="toast"></div>
 
 <script>
-const RACE_DATE = '2026-08-07';
 let weekData = [], currentRow = null, currentDate = null;
 
 const BADGES = [
@@ -293,11 +292,6 @@ function dayKey(r){
   // Day-of-week → WEEKLY_PROGRAM key. Always returns a key; the API decides
   // whether there are exercises (rest days → 404 → panel hidden).
   return ['SUN','MON','TUE','WED','THU','FRI','SAT'][new Date(r.date+'T12:00:00').getDay()];
-}
-
-function setCountdown(){
-  const days=Math.round((new Date(RACE_DATE+'T00:00:00')-new Date())/864e5);
-  document.getElementById('countdown').textContent = days>0 ? `T-${days} DAYS` : 'RACE WEEK';
 }
 
 // ── Render ──
@@ -439,7 +433,6 @@ document.getElementById('pinIn').addEventListener('keydown',e=>{if(e.key==='Ente
 
 // ── Boot ──
 async function boot(){
-  setCountdown();
   const me=await (await fetch('/api/me')).json();
   if(me.pin_required && !me.authenticated){ showLogin(); return; }
   loadWeek();

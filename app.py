@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Fat Dog 120 Training Dashboard — Flask + Google Sheets backend.
+FURY (For Ultra Running and You) — Flask + Google Sheets training dashboard.
 
 Data model (Google Sheet, `Plan` tab, header in row 1, data from row 2):
   A Date (ISO)  B Day  C Phase  D Workout Type  E Description
@@ -333,8 +333,8 @@ def api_day(dow):
 @app.route("/manifest.json")
 def manifest():
     return jsonify({
-        "name": "Fat Dog 120 Training",
-        "short_name": "Fat Dog",
+        "name": "FURY — For Ultra Running and You",
+        "short_name": "FURY",
         "start_url": "/",
         "display": "standalone",
         "background_color": "#0d1117",
@@ -361,7 +361,7 @@ if __name__ == "__main__":
         ip = socket.gethostbyname(socket.gethostname())
     except Exception:
         ip = "your-mac-ip"
-    print("\n  Fat Dog 120 Training Dashboard")
+    print("\n  FURY — For Ultra Running and You")
     print(f"    Local:  http://127.0.0.1:5002")
     print(f"    Phone:  http://{ip}:5002")
     print("\n    Ctrl+C to stop.\n")
