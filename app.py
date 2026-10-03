@@ -301,11 +301,7 @@ THU_BLOCK = [
     {"name": "Side plank", "scheme": "2×30 sec each", "notes": "Core."},
 ]
 
-# Post-Dark Divide, pre-MRI cross-training block (2026-09-14). No running —
-# right knee "popped" at mile 101 (suspected meniscus tear, MRI pending).
-# Upper body + easy bike + yoga + the same knee rehab that's been tolerated
-# for months. Holding pattern, not a progression — swap back to MON/TUE/THU
-# _BLOCK once running resumes.
+# Return-to-run block (since 2026-10-02): 3 flat runs/wk, bike + upper body Mon/Wed, yoga Fri.
 BIKE_NOTE = [
     {"name": "Easy spin (see today's plan for duration)", "scheme": "Zone 2, cadence 85-95",
      "notes": "Seat higher than running setup to limit knee flexion. Light resistance, no standing climbs. Stop on any knee response."},
@@ -330,19 +326,31 @@ UPPER_BODY_B = [
     {"name": "Side plank", "scheme": "3×30-40 sec each", "notes": "Anti-rotation core."},
 ]
 
+PRE_RUN_ACTIVATION = [
+    {"name": "Banded clamshells", "scheme": "2×15/side", "notes": "Glute med."},
+    {"name": "Single-leg glute bridge", "scheme": "2×10/side · 2-1-2", "notes": "Glute max."},
+    {"name": "Ankle dorsiflexion wall drill", "scheme": "2×10/leg", "notes": "Heel down, knee tracks over toe."},
+    {"name": "Tibialis anterior raises", "scheme": "2×20", "notes": "Shin prevention."},
+]
+
+RUN_RULES = [
+    {"name": "Easy run, flat only", "scheme": "Distance per today's plan",
+     "notes": "No hills or downhill pushing. STOP and walk if the knee catches, locks, or gives way. Knee check tonight and tomorrow AM."},
+]
+
 WEEKLY_PROGRAM = {
     "MON": {"title": "Mon — Bike + Upper Body A", "duration": "~45 min total",
             "exercises": ANCHOR_EXERCISES + KNEE_REHAB_BLOCK + BIKE_NOTE + UPPER_BODY_A},
-    "TUE": {"title": "Tue — Yoga", "duration": "~20-30 min",
-            "exercises": YOGA_NOTE},
+    "TUE": {"title": "Tue — Easy run (flat)", "duration": "~5 min warm-up + run",
+            "exercises": PRE_RUN_ACTIVATION + RUN_RULES},
     "WED": {"title": "Wed — Bike + Upper Body B", "duration": "~45 min total",
             "exercises": ANCHOR_EXERCISES + KNEE_REHAB_BLOCK + BIKE_NOTE + UPPER_BODY_B},
-    "THU": {"title": "Thu — Rest / family walk", "duration": "",
-            "exercises": []},
-    "FRI": {"title": "Fri — Yoga", "duration": "~20-30 min",
-            "exercises": YOGA_NOTE},
-    "SAT": {"title": "Sat — Bike (long)", "duration": "~15 min + bike",
-            "exercises": ANCHOR_EXERCISES + KNEE_REHAB_BLOCK + BIKE_NOTE},
+    "THU": {"title": "Thu — Easy run (flat)", "duration": "~5 min warm-up + run",
+            "exercises": PRE_RUN_ACTIVATION + RUN_RULES},
+    "FRI": {"title": "Fri — Yoga + knee rehab", "duration": "~30 min",
+            "exercises": KNEE_REHAB_BLOCK + YOGA_NOTE},
+    "SAT": {"title": "Sat — Easy run (flat)", "duration": "~5 min warm-up + run",
+            "exercises": PRE_RUN_ACTIVATION + RUN_RULES},
     "SUN": {"title": "Sun — Rest / family walk", "duration": "",
             "exercises": []},
 }
