@@ -338,13 +338,31 @@ RUN_RULES = [
      "notes": "No hills or downhill pushing. STOP and walk if the knee catches, locks, or gives way. Knee check tonight and tomorrow AM."},
 ]
 
+LOWER_ISO = [
+    {"name": "Spanish squat hold", "scheme": "5×45 sec · 2 min rest",
+     "notes": "Knee bend ~60°, not deeper. ~70% effort. Patellar tendon + quads. Discomfort up to 3/10 OK if gone within 24h; stop for catching or sharp pain."},
+    {"name": "Single-leg glute bridge hold", "scheme": "3×30-45 sec/side", "notes": "Top position, glutes squeezed."},
+    {"name": "Heel-elevated bridge hold (heels on bench/chair)", "scheme": "3×30 sec", "notes": "Hamstring emphasis, hips high, both legs."},
+    {"name": "Straight-knee calf raise hold", "scheme": "5×30 sec", "notes": "Hold at the top. Gastroc + Achilles."},
+    {"name": "Bent-knee calf raise hold (seated)", "scheme": "3×30 sec", "notes": "Soleus."},
+    {"name": "Banded lateral walks", "scheme": "3×12/direction", "notes": "Glute med."},
+]
+
+LOWER_SLOW = [
+    {"name": "High box squat (goblet)", "scheme": "3×10 · 3-1-3",
+     "notes": "Box height ~60° knee bend, not deeper. Light DB. Quads/glutes. Stop 2-3 reps short of failure."},
+    {"name": "DB Romanian deadlift", "scheme": "3×10 · 3-1-3", "notes": "Soft knees. Hamstrings/glutes."},
+    {"name": "Band terminal knee extension", "scheme": "3×15 · 2 sec squeeze", "notes": "Quads, final degrees of extension."},
+    {"name": "Single-leg glute bridge", "scheme": "3×10/side · 2-1-2", "notes": "Right-side emphasis."},
+]
+
 WEEKLY_PROGRAM = {
-    "MON": {"title": "Mon — Bike + Upper Body A", "duration": "~45 min total",
-            "exercises": ANCHOR_EXERCISES + KNEE_REHAB_BLOCK + BIKE_NOTE + UPPER_BODY_A},
+    "MON": {"title": "Mon — Bike + Upper Body A + knee isometrics", "duration": "~55 min total",
+            "exercises": ANCHOR_EXERCISES + LOWER_ISO + BIKE_NOTE + UPPER_BODY_A},
     "TUE": {"title": "Tue — Easy run (flat)", "duration": "~5 min warm-up + run",
             "exercises": PRE_RUN_ACTIVATION + RUN_RULES},
-    "WED": {"title": "Wed — Bike + Upper Body B", "duration": "~45 min total",
-            "exercises": ANCHOR_EXERCISES + KNEE_REHAB_BLOCK + BIKE_NOTE + UPPER_BODY_B},
+    "WED": {"title": "Wed — Bike + Upper Body B + slow strength", "duration": "~55 min total",
+            "exercises": ANCHOR_EXERCISES + LOWER_SLOW + BIKE_NOTE + UPPER_BODY_B},
     "THU": {"title": "Thu — Easy run (flat)", "duration": "~5 min warm-up + run",
             "exercises": PRE_RUN_ACTIVATION + RUN_RULES},
     "FRI": {"title": "Fri — Yoga + knee rehab", "duration": "~30 min",
