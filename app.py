@@ -356,7 +356,7 @@ LOWER_SLOW = [
     {"name": "Single-leg glute bridge", "scheme": "3×10/side · 2-1-2", "notes": "Right-side emphasis."},
 ]
 
-WEEKLY_PROGRAM = {
+RUN_BLOCK_PROGRAM = {
     "MON": {"title": "Mon — Bike + Upper Body A + knee isometrics", "duration": "~55 min total",
             "exercises": ANCHOR_EXERCISES + LOWER_ISO + BIKE_NOTE + UPPER_BODY_A},
     "TUE": {"title": "Tue — Easy run (flat)", "duration": "~5 min warm-up + run",
@@ -372,6 +372,21 @@ WEEKLY_PROGRAM = {
     "SUN": {"title": "Sun — Rest / family walk", "duration": "",
             "exercises": []},
 }
+
+# Post-PRP easy window (PRP 2026-10-14). Switch back to RUN_BLOCK_PROGRAM ~2026-10-26.
+POST_PRP_PROGRAM = {
+    "MON": {"title": "Mon — Upper Body A (post-PRP)", "duration": "~30 min",
+            "exercises": BIKE_NOTE + UPPER_BODY_A},
+    "TUE": {"title": "Tue — Easy walk", "duration": "", "exercises": []},
+    "WED": {"title": "Wed — Upper Body B (post-PRP)", "duration": "~30 min",
+            "exercises": BIKE_NOTE + UPPER_BODY_B},
+    "THU": {"title": "Thu — Easy walk", "duration": "", "exercises": []},
+    "FRI": {"title": "Fri — Gentle yoga", "duration": "~20-30 min",
+            "exercises": YOGA_NOTE},
+    "SAT": {"title": "Sat — Easy walk", "duration": "", "exercises": []},
+    "SUN": {"title": "Sun — Rest", "duration": "", "exercises": []},
+}
+WEEKLY_PROGRAM = POST_PRP_PROGRAM
 
 
 @app.route("/api/day/<dow>")
