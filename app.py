@@ -334,8 +334,8 @@ PRE_RUN_ACTIVATION = [
 ]
 
 RUN_RULES = [
-    {"name": "Easy run, flat only", "scheme": "Distance per today's plan",
-     "notes": "No hills or downhill pushing. STOP and walk if the knee catches, locks, or gives way. Knee check tonight and tomorrow AM."},
+    {"name": "Easy run, stay inside the caps", "scheme": "Distance and vert per today's plan",
+     "notes": "No downhill pushing, no technical terrain. STOP and walk if the knee catches, locks, or gives way. Knee check tonight and tomorrow AM."},
 ]
 
 LOWER_ISO = [
@@ -356,37 +356,22 @@ LOWER_SLOW = [
     {"name": "Single-leg glute bridge", "scheme": "3×10/side · 2-1-2", "notes": "Right-side emphasis."},
 ]
 
-RUN_BLOCK_PROGRAM = {
-    "MON": {"title": "Mon — Bike + Upper Body A + knee isometrics", "duration": "~55 min total",
+WEEKLY_PROGRAM = {
+    "MON": {"title": "Mon — Easy run", "duration": "~5 min warm-up + run",
+            "exercises": PRE_RUN_ACTIVATION + RUN_RULES},
+    "TUE": {"title": "Tue — Upper Body A + knee isometrics", "duration": "~55 min total",
             "exercises": ANCHOR_EXERCISES + LOWER_ISO + BIKE_NOTE + UPPER_BODY_A},
-    "TUE": {"title": "Tue — Easy run (flat)", "duration": "~5 min warm-up + run",
+    "WED": {"title": "Wed — Easy run", "duration": "~5 min warm-up + run",
             "exercises": PRE_RUN_ACTIVATION + RUN_RULES},
-    "WED": {"title": "Wed — Bike + Upper Body B + slow strength", "duration": "~55 min total",
+    "THU": {"title": "Thu — Upper Body B + slow strength", "duration": "~55 min total",
             "exercises": ANCHOR_EXERCISES + LOWER_SLOW + BIKE_NOTE + UPPER_BODY_B},
-    "THU": {"title": "Thu — Easy run (flat)", "duration": "~5 min warm-up + run",
-            "exercises": PRE_RUN_ACTIVATION + RUN_RULES},
     "FRI": {"title": "Fri — Yoga + knee rehab", "duration": "~30 min",
             "exercises": KNEE_REHAB_BLOCK + YOGA_NOTE},
-    "SAT": {"title": "Sat — Easy run (flat)", "duration": "~5 min warm-up + run",
+    "SAT": {"title": "Sat — Easy run", "duration": "~5 min warm-up + run",
             "exercises": PRE_RUN_ACTIVATION + RUN_RULES},
-    "SUN": {"title": "Sun — Rest / family walk", "duration": "",
+    "SUN": {"title": "Sun — Hike / walk (poles on descents)", "duration": "",
             "exercises": []},
 }
-
-# Post-PRP easy window (PRP 2026-10-14). Switch back to RUN_BLOCK_PROGRAM ~2026-10-26.
-POST_PRP_PROGRAM = {
-    "MON": {"title": "Mon — Upper Body A (post-PRP)", "duration": "~30 min",
-            "exercises": BIKE_NOTE + UPPER_BODY_A},
-    "TUE": {"title": "Tue — Easy walk", "duration": "", "exercises": []},
-    "WED": {"title": "Wed — Upper Body B (post-PRP)", "duration": "~30 min",
-            "exercises": BIKE_NOTE + UPPER_BODY_B},
-    "THU": {"title": "Thu — Easy walk", "duration": "", "exercises": []},
-    "FRI": {"title": "Fri — Gentle yoga", "duration": "~20-30 min",
-            "exercises": YOGA_NOTE},
-    "SAT": {"title": "Sat — Easy walk", "duration": "", "exercises": []},
-    "SUN": {"title": "Sun — Rest", "duration": "", "exercises": []},
-}
-WEEKLY_PROGRAM = POST_PRP_PROGRAM
 
 
 @app.route("/api/day/<dow>")
