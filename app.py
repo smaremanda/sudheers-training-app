@@ -143,6 +143,17 @@ def api_logout():
 @login_required
 def api_week():
     monday, sunday, anchor = week_window(request.args.get("date"))
+    try:
+        weeks = max(1, min(4, int(request.args.get("weeks", 1))))
+    except ValueError:
+        weeks = 1
+    sunday = monday + timedelta(days=7 * weeks - 1)
+    # Real "today" (client's local date) so paged weeks still mark today/past
+    # correctly; falls back to the anchor for old clients.
+    try:
+        today = datetime.strptime(request.args["today"], "%Y-%m-%d").date()
+    except (KeyError, ValueError):
+        today = anchor
     rows = get_all_rows()
     week = []
     for i, row in enumerate(rows):
@@ -154,11 +165,12 @@ def api_week():
             continue
         if monday <= d <= sunday:
             rec = row_to_dict(row, i + 2)
-            rec["is_today"] = (d == anchor)
-            rec["is_past"]  = (d < anchor)
+            rec["is_today"] = (d == today)
+            rec["is_past"]  = (d < today)
             week.append(rec)
     week.sort(key=lambda r: r["date"])
-    return jsonify({"week": week, "today": anchor.isoformat()})
+    return jsonify({"week": week, "today": today.isoformat(),
+                    "start": monday.isoformat(), "end": sunday.isoformat()})
 
 
 @app.route("/api/log", methods=["POST"])
