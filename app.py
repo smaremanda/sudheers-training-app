@@ -346,13 +346,35 @@ PRE_RUN_ACTIVATION = [
 ]
 
 RUN_RULES = [
-    {"name": "Easy run, stay inside the caps", "scheme": "Distance and vert per today's plan",
-     "notes": "No downhill pushing, no technical terrain. STOP and walk if the knee catches, locks, or gives way. Knee check tonight and tomorrow AM."},
+    {"name": "Easy run", "scheme": "Distance per today's plan",
+     "notes": "Flat or rolling, walk any steep or technical descent. STOP and walk if the knee catches, locks, or gives way. AM check: compare both knees front and back, plus calves."},
+]
+
+LONG_RULES = [
+    {"name": "Long run", "scheme": "Distance + vert per today's plan",
+     "notes": "Power-hike steep climbs. Descents: runnable grade only, short quick steps, poles OK; walk steep, technical, or slick. Run descents only once the downhill gate is open."},
+    {"name": "Fuel + water", "scheme": "60-80 g carbs/hr", "notes": "Start in the first 30 min. Carry water."},
+    {"name": "Stop rules", "scheme": "Catch / lock / give way = walk out",
+     "notes": "Knee getting worse on the downs = shorten the route. Next AM swelling or pain over 3/10 = skip the next run."},
+]
+
+RACE_RULES = [
+    {"name": "Race day: run it controlled", "scheme": "Effort + bail rules per today's plan",
+     "notes": "No all-out efforts, no sprint finish. Catching, locking, or giving way = walk out on the shortest route."},
+]
+
+STEP_DOWNS = [
+    {"name": "Slow eccentric step-downs", "scheme": "3×8/leg · 3 sec down",
+     "notes": "Start on a 4-6 in step, raise 2 in/week if pain-free (aim ~8-10 in by mid-Dec). Knee tracks over 2nd toe. Skip in race weeks."},
+]
+
+PERONEAL = [
+    {"name": "Peroneal band eversion", "scheme": "3×15 each ankle", "notes": "Ankle-roll insurance (ankle roll = knee twist)."},
 ]
 
 LOWER_ISO = [
     {"name": "Spanish squat hold", "scheme": "5×45 sec · 2 min rest",
-     "notes": "Knee bend ~60°, not deeper. ~70% effort. Patellar tendon + quads. Discomfort up to 3/10 OK if gone within 24h; stop for catching or sharp pain."},
+     "notes": "Knee bend ~60° now; ~75° from week of 11/23, ~90° from week of 12/14, each only if the last angle was pain-free. ~70% effort. Patellar tendon + quads. Discomfort up to 3/10 OK if gone within 24h; stop for catching or sharp pain."},
     {"name": "Single-leg glute bridge hold", "scheme": "3×30-45 sec/side", "notes": "Top position, glutes squeezed."},
     {"name": "Heel-elevated bridge hold (heels on bench/chair)", "scheme": "3×30 sec", "notes": "Hamstring emphasis, hips high, both legs."},
     {"name": "Straight-knee calf raise hold", "scheme": "5×30 sec", "notes": "Hold at the top. Gastroc + Achilles."},
@@ -362,7 +384,7 @@ LOWER_ISO = [
 
 LOWER_SLOW = [
     {"name": "High box squat (goblet)", "scheme": "3×10 · 3-1-3",
-     "notes": "Box height ~60° knee bend, not deeper. Light DB. Quads/glutes. Stop 2-3 reps short of failure."},
+     "notes": "Box at ~60° knee bend; lower it in step with the isometric angle (~75°, then ~90°) only when pain-free. Light DB. Quads/glutes. Stop 2-3 reps short of failure."},
     {"name": "DB Romanian deadlift", "scheme": "3×10 · 3-1-3", "notes": "Soft knees. Hamstrings/glutes."},
     {"name": "Band terminal knee extension", "scheme": "3×15 · 2 sec squeeze", "notes": "Quads, final degrees of extension."},
     {"name": "Single-leg glute bridge", "scheme": "3×10/side · 2-1-2", "notes": "Right-side emphasis."},
@@ -372,17 +394,27 @@ WEEKLY_PROGRAM = {
     "MON": {"title": "Mon — Easy run", "duration": "~5 min warm-up + run",
             "exercises": PRE_RUN_ACTIVATION + RUN_RULES},
     "TUE": {"title": "Tue — Upper Body A + knee isometrics", "duration": "~55 min total",
-            "exercises": ANCHOR_EXERCISES + LOWER_ISO + BIKE_NOTE + UPPER_BODY_A},
+            "exercises": ANCHOR_EXERCISES + LOWER_ISO + STEP_DOWNS + BIKE_NOTE + UPPER_BODY_A},
     "WED": {"title": "Wed — Easy run", "duration": "~5 min warm-up + run",
             "exercises": PRE_RUN_ACTIVATION + RUN_RULES},
     "THU": {"title": "Thu — Upper Body B + slow strength", "duration": "~55 min total",
             "exercises": ANCHOR_EXERCISES + LOWER_SLOW + BIKE_NOTE + UPPER_BODY_B},
-    "FRI": {"title": "Fri — Yoga + knee rehab", "duration": "~30 min",
-            "exercises": KNEE_REHAB_BLOCK + YOGA_NOTE},
-    "SAT": {"title": "Sat — Easy run", "duration": "~5 min warm-up + run",
+    "FRI": {"title": "Fri — Swim / yoga + knee rehab", "duration": "~30 min + swim",
+            "exercises": KNEE_REHAB_BLOCK + PERONEAL + YOGA_NOTE},
+    "SAT": {"title": "Sat — Long run", "duration": "~5 min warm-up + run",
+            "exercises": PRE_RUN_ACTIVATION + LONG_RULES},
+    "SUN": {"title": "Sun — Short easy run or hike", "duration": "~5 min warm-up if running",
             "exercises": PRE_RUN_ACTIVATION + RUN_RULES},
-    "SUN": {"title": "Sun — Hike / walk (poles on descents)", "duration": "",
-            "exercises": []},
+}
+
+# Cards picked by the day's workout type (not weekday) in the app, so holiday
+# or shifted days get the right card. Not synced to Reminders.
+EXTRA_PROGRAM = {
+    "EASY": {"title": "Easy run", "duration": "~5 min warm-up + run",
+             "exercises": PRE_RUN_ACTIVATION + RUN_RULES},
+    "LONG": {**WEEKLY_PROGRAM["SAT"], "title": "Long run"},
+    "RACE": {"title": "Race day", "duration": "~5 min warm-up + easy jog",
+             "exercises": PRE_RUN_ACTIVATION + RACE_RULES},
 }
 
 
@@ -390,7 +422,7 @@ WEEKLY_PROGRAM = {
 @login_required
 def api_day(dow):
     key = dow.upper()
-    block = WEEKLY_PROGRAM.get(key)
+    block = WEEKLY_PROGRAM.get(key) or EXTRA_PROGRAM.get(key)
     if not block or not block["exercises"]:
         return jsonify({"error": f"no exercises for {dow}"}), 404
     return jsonify(block)

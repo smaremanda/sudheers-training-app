@@ -285,7 +285,19 @@ function planNum(s){ // "3-4"→4, "6-6.5"→6.5, "3 or hike"→3, "-"→0
   return m ? parseFloat(m[2]||m[1]) : 0;
 }
 function fmtMi(n){return (Math.round(n*10)/10).toString();}
-function dayKey(r){return ['SUN','MON','TUE','WED','THU','FRI','SAT'][parseISO(r.date).getDay()];}
+// Card picked by the day's workout type so holiday/shifted days get the right
+// one; weekday is the fallback. null = no card (rest days).
+function dayKey(r){
+  const t=clean(r.type).toLowerCase();
+  if(/race/.test(t)) return 'RACE';
+  if(/rest|recovery|family/.test(t)) return null;
+  if(/long run/.test(t)) return 'LONG';
+  if(/upper body a/.test(t)) return 'TUE';
+  if(/upper body b/.test(t)) return 'THU';
+  if(/swim|yoga|rehab/.test(t)) return 'FRI';
+  if(/easy run|shakeout/.test(t)) return 'EASY';
+  return ['SUN','MON','TUE','WED','THU','FRI','SAT'][parseISO(r.date).getDay()];
+}
 
 // ── API ──
 async function fetchRange(anchor, weeks){
@@ -457,8 +469,10 @@ async function showDay(date, anim='enter-r'){
     ${nav}
   </div>`;
 
+  const key = dayKey(r);
+  if(!key) return;
   try{
-    const sres = await fetch('/api/day/'+dayKey(r));
+    const sres = await fetch('/api/day/'+key);
     if(sres.ok && currentDay===date) renderStrength(await sres.json());
   }catch{}
 }
